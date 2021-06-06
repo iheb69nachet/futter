@@ -201,6 +201,9 @@ console.log({getMonth});
   });
 
 })
+app.get('/YearlyGen',(req,res)=>{
+  
+})
 app.get('/graphMonth/:id',async (req,res)=>{
   var con = mysql.createConnection({
     host: "localhost",
@@ -208,7 +211,7 @@ app.get('/graphMonth/:id',async (req,res)=>{
     password: "",
     database: "flutter"
   });
-          
+      
         getMonth=date.format(now,'M');
         console.log({getMonth});
   con.connect(function(err) {
@@ -236,8 +239,14 @@ app.get('/graphYear/:id',async (req,res)=>{
   });
   con.connect(function(err) {
     if (err) throw err;
-    con.query(`SELECT id_product,year, SUM(production) AS yearProduction ,280 * SUM(production) As win FROM production where year=2021 and month=1 and id_product=${req.params.id} GROUP BY year`, function (err, result, fields) {
+    con.query(`SELECT id_product,year, SUM(production) AS yearProduction ,280 * SUM(production) As win FROM production where month=1 and id_product=${req.params.id} GROUP BY year`, function (err, result, fields) {
       if (err) throw err;
+      result.unshift({
+        "id_product": 1,
+        "year": 2021,
+        "yearProduction": 0,
+        "win": 0
+        })
      res.send(result);
     });
   });

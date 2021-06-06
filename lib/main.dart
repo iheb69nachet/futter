@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/login/login.dart';
-import 'Screens/qrcode/scan_qr_code.dart';
+import 'Screens/charts/Charts.dart';
 
 String userLogin;
 void getUser() async {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ScanQRCode(),
+      home: LoginScreen(),
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:qrcode_mongodb/Screens/qrcode/scan_qr_code.dart';
+import 'package:qrcode_mongodb/Screens/charts/Charts.dart';
 import 'package:qrcode_mongodb/Screens/register/register.dart';
 
 import 'package:qrcode_mongodb/components/background.dart';
@@ -25,20 +25,17 @@ class _LoginScreenState extends State<LoginScreen> {
   void submit(context) async {
     print("Yes");
     try {
-      // Uri url = Uri.parse('http://192.168.43.60:3000/login');
-      Uri url = Uri.parse('https://jsonplaceholder.typicode.com/albums/1');
-
       SharedPreferences preferences = await SharedPreferences.getInstance();
       Map<String, dynamic> user = {
         "email": email.text,
         "password": password.text,
       };
-      //print(user);
+
       Map<String, String> customHeaders = {
         "content-type": "application/json",
       };
       var l = jsonEncode(user);
-      //print(l);
+
       http.Response response = await http.post(
         Uri.parse('http://192.168.1.199:3000/login'),
         headers: <String, String>{
@@ -56,16 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
         if (responseBody["data"]['product'].length == 0) {
           preferences.setBool("hasProduct", false);
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (ctx) => ScanQRCode()),
-              (route) => false);
+              MaterialPageRoute(builder: (ctx) => Charts()), (route) => false);
         } else {
           preferences.setBool("hasProduct", true);
 
           preferences.setInt(
               "productId", responseBody["data"]['product'][0]['id']);
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (ctx) => ScanQRCode()),
-              (route) => false);
+              MaterialPageRoute(builder: (ctx) => Charts()), (route) => false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
