@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:qrcode_mongodb/Screens/charts/Charts.dart';
+import 'package:qrcode_mongodb/Screens/qrcode/scan_qr_code.dart';
 import 'package:qrcode_mongodb/Screens/register/register.dart';
 
 import 'package:qrcode_mongodb/components/background.dart';
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var l = jsonEncode(user);
 
       http.Response response = await http.post(
-        Uri.parse('http://192.168.1.199:3000/login'),
+        Uri.parse('http://192.168.43.60:3000/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -53,7 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (responseBody["data"]['product'].length == 0) {
           preferences.setBool("hasProduct", false);
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (ctx) => Charts()), (route) => false);
+              MaterialPageRoute(builder: (ctx) => ScanQRCode()),
+              (route) => false);
         } else {
           preferences.setBool("hasProduct", true);
 

@@ -1,18 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
+
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:qrcode_mongodb/Screens/Profile/EditProfilePage.dart';
 import 'package:qrcode_mongodb/Screens/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-
-import 'dart:math';
 
 class Charts extends StatefulWidget {
   Charts({Key key}) : super(key: key);
@@ -118,11 +114,13 @@ class _ChartsState extends State<Charts> {
 
   var isSelected = [true, false, false];
 
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Future getDataGenDay() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int productId = prefs.getInt('productID') ?? 0;
+
     monthTotalProduction = 0;
 
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphDay/1');
+    Uri url = Uri.parse('http://192.168.43.60:3000/graphDay/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{
@@ -142,9 +140,11 @@ class _ChartsState extends State<Charts> {
   }
 
   Future getDataGenMonth() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int productId = prefs.getInt('productID') ?? 0;
     monthTotalProduction = 0;
 
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphMonth/1');
+    Uri url = Uri.parse('http://192.168.43.60:3000/graphMonth/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{
@@ -165,9 +165,11 @@ class _ChartsState extends State<Charts> {
   }
 
   Future getDataGenYear() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int productId = prefs.getInt('productID') ?? 0;
     monthTotalProduction = 0;
 
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphYear/1');
+    Uri url = Uri.parse('http://192.168.43.60:3000/graphYear/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{

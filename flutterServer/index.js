@@ -28,10 +28,29 @@ const register=await axios.post(`http://localhost/api.php/records/users`,req.bod
 res.send({"error":0,"message":"signup success","data":null})
 })
 app.post('/AssignProduct/:qr_code/:name/:owner_id',async (req,res)=>{
-const register=await axios.post(`http://localhost/api.php/records/product`,req.params)
-res.send({
-  "error":0,"message":"prodcut added successfully","data":null
-})
+const check=await axios.get(`http://localhost/api.php/records/product?filter=qr_code,eq,${req.params.qr_code}`)
+if(check.data.records.length==0){
+  console.log(req.params);
+
+  const register=await axios.post(`http://localhost/api.php/records/product`,req.params)
+  res.send({
+    "error":0,"message":"prodcut added successfully","data":register.data
+  })
+}
+else{
+  console.log(check.data.records[0].id);
+
+  const register=await axios.put(`http://localhost/api.php/records/product/${check.data.records[0].id}`,req.params)
+
+  res.send({
+    "error":0,"message":"prodcut added successfully","data":check.data.records[0].id
+  })
+
+  res.send(check.data)
+
+}
+
+
 
 
   
@@ -283,6 +302,59 @@ app.get('/graphMonth',async (req,res)=>{
     });
   });
 
+})
+app.put('/updateProfile/:id',async(req,res)=>{
+  const userId=req.params.id;
+  console.log(req.body);
+  if(req.body.email!=='' && req.body.password!=='' && req.body.name!==""){
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,req.body)
+
+  }else if(req.body.email!=='' && req.body.password=='' && req.body.name==""){
+    data={
+      "email":req.body.email
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+
+  }
+  else if(req.body.email=='' && req.body.password!=='' && req.body.name==""){
+    data={
+      "password":req.body.password
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+
+  }
+  else if(req.body.email=='' && req.body.password=='' && req.body.name!==""){
+    data={
+      "name":req.body.name
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+
+  }
+  else if(req.body.email!=='' && req.body.password!=='' && req.body.name==""){
+    data={
+      "email":req.body.email,
+      "password":req.body.password
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+
+  }
+  else if(req.body.email=='' && req.body.password!=='' && req.body.name!==""){
+    data={
+      "name":req.body.name,
+      "password":req.body.password
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+
+  }
+  else{
+    data={
+      "name":req.body.name,
+      "email":req.body.email
+    }
+    const update=await axios.put(`http://localhost/api.php/records/users/${userId}`,data)
+  }
+
+console.log(userId);
 })
  function add(accumulator, a) {
   return accumulator + a;

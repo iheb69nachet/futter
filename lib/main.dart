@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/login/login.dart';
-import 'Screens/charts/Charts.dart';
 
 String userLogin;
 void getUser() async {

@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:qrcode_mongodb/Screens/charts/Charts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsUI extends StatelessWidget {
   @override
@@ -21,29 +24,67 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  static String p =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+  RegExp regExp = new RegExp(p);
   bool showPassword = false;
   final TextEditingController email = TextEditingController();
 
   final TextEditingController name = TextEditingController();
   final TextEditingController password = TextEditingController();
-  update(name, email, password) async {
-    //   Map<String, dynamic> user = {
-    //     "email": email.text,
-    //     "password": password.text,
-    //     "name":name.text
-    //   };
-    //   var l = jsonEncode(user);
 
-    // http.Response response = await http.put(
-    //     Uri.parse('http://192.168.1.199:3000/login'),
-    //     headers: <String, String>{
-    //       'Content-Type': 'application/json; charset=UTF-8',
-    //     },
-    //     body: l,
-    //   );
-  }
   @override
   Widget build(BuildContext context) {
+    update(name, email, password) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int userId = prefs.getInt('id') ?? 0;
+      Map<String, dynamic> user = {
+        "email": email.text,
+        "password": password.text,
+        "name": name.text
+      };
+      var l = jsonEncode(user);
+
+      http.Response response = await http.put(
+        Uri.parse('http://192.168.43.60:3000/updateProfile/$userId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: l,
+      );
+    }
+
+    void vaildation() async {
+      if (email.text.isEmpty && password.text.isEmpty && name.text.isEmpty) {
+        update(name, email, password);
+      } else if (email.text.isEmpty) {
+        if (name.text.isEmpty) {
+          if (password.text.length < 8) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Password  Is Too Short"),
+              ),
+            );
+          } else {
+            update(name, email, password);
+          }
+        } else {
+          if (name.text.length < 8) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("name  Is Too Short"),
+              ),
+            );
+          } else {
+            update(name, email, password);
+          }
+        }
+      } else {
+        update(name, email, password);
+      }
+    }
+
     return Scaffold(
       backgroundColor: HexColor('#2f4d86'),
       appBar: AppBar(
@@ -108,10 +149,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      print(name.text);
-
-                      print(email.text);
-                      print(password.text);
+                      vaildation();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Profile Edited Successfully"),
+                          duration: Duration(milliseconds: 2000),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
                     },
                     color: Colors.green,
                     padding: EdgeInsets.symmetric(horizontal: 50),
@@ -166,6 +211,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
               fontWeight: FontWeight.bold,
               color: Colors.white,
             )),
+      ),
+    );
+  }
+
+  alert() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CupertinoAlertDialog(
+            title: Text("You don't have any products yet"),
+            content: Text("Scan QR code to continue"),
+            actions: [
+              CupertinoDialogAction(
+                  child: RaisedButton(
+                onPressed: () {
+                  // scanQrCode();
+                  // submit(context);
+                },
+                textColor: Colors.white,
+                color: Colors.blue,
+                padding: const EdgeInsets.all(10.0),
+                child: const Text('Scan Now ', style: TextStyle(fontSize: 20)),
+              ))
+            ],
+          )
+        ],
       ),
     );
   }
