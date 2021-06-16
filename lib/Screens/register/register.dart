@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void submit(context) async {
     print("Yes");
     try {
-      Uri url = Uri.parse('http://192.168.43.60:3000/signUp');
+      Uri url = Uri.parse('http://192.168.1.13:3000/signUp');
       SharedPreferences preferences;
       Map<String, dynamic> user = {
         "name": name.text,

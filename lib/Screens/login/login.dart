@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var l = jsonEncode(user);
 
       http.Response response = await http.post(
-        Uri.parse('http://192.168.43.60:3000/login'),
+        Uri.parse('http://192.168.1.13:3000/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -47,19 +47,19 @@ class _LoginScreenState extends State<LoginScreen> {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       print(responseBody);
       if (responseBody['error'] == 0) {
-        preferences.setString("email", responseBody["data"]['email']);
+        await preferences.setString("email", responseBody["data"]['email']);
 
-        preferences.setInt("id", responseBody["data"]["id"]);
+        await preferences.setInt("id", responseBody["data"]["id"]);
 
         if (responseBody["data"]['product'].length == 0) {
-          preferences.setBool("hasProduct", false);
+          await preferences.setBool("hasProduct", false);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (ctx) => ScanQRCode()),
               (route) => false);
         } else {
-          preferences.setBool("hasProduct", true);
-
-          preferences.setInt(
+          await preferences.setBool("hasProduct", true);
+          print(responseBody["data"]['product'][0]['id']);
+          await preferences.setInt(
               "productId", responseBody["data"]['product'][0]['id']);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (ctx) => Charts()), (route) => false);

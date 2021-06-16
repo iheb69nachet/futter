@@ -4,9 +4,10 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:qrcode_mongodb/Screens/Message/message.dart';
 
-import 'package:qrcode_mongodb/Screens/Profile/EditProfilePage.dart';
 import 'package:qrcode_mongodb/Screens/login/login.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
@@ -116,11 +117,12 @@ class _ChartsState extends State<Charts> {
 
   Future getDataGenDay() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int productId = prefs.getInt('productID') ?? 0;
-
+    int productId = prefs.getInt('productID') ?? 1;
+    print('pdrodfdffd');
+    print(productId);
     monthTotalProduction = 0;
 
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphDay/$productId');
+    Uri url = Uri.parse('http://192.168.1.13:3000/graphDay/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{
@@ -133,6 +135,7 @@ class _ChartsState extends State<Charts> {
     for (int i = 0; i < q.length; i++) {
       dataGenDay.add(GraphGenDay.fromJson(q[i]));
     }
+    print(q.length);
     dailyTotalProduction = q[q.length - 1]['dayProduction'];
     dailyTotalProfit = dailyTotalProduction * 280 / 1000;
 
@@ -141,10 +144,11 @@ class _ChartsState extends State<Charts> {
 
   Future getDataGenMonth() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int productId = prefs.getInt('productID') ?? 0;
+    int productId = prefs.getInt('productID') ?? 1;
+    print('pdrodfdffd');
+    print(productId);
     monthTotalProduction = 0;
-
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphMonth/$productId');
+    Uri url = Uri.parse('http://192.168.1.13:3000/graphMonth/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{
@@ -158,6 +162,8 @@ class _ChartsState extends State<Charts> {
     for (int i = 0; i < q.length; i++) {
       dataGenMonth.add(GraphGenMonth.fromJson(q[i]));
     }
+    print('aaa: ');
+    print(q);
     monthTotalProduction = q[q.length - 1]['monthProduction'];
     monthTotalProfit = monthTotalProduction * 280 / 1000;
 
@@ -166,10 +172,10 @@ class _ChartsState extends State<Charts> {
 
   Future getDataGenYear() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int productId = prefs.getInt('productID') ?? 0;
+    int productId = await prefs.getInt('productID');
     monthTotalProduction = 0;
 
-    Uri url = Uri.parse('http://192.168.43.60:3000/graphYear/$productId');
+    Uri url = Uri.parse('http://192.168.1.13:3000/graphYear/$productId');
     http.Response response = await http.get(
       url,
       headers: <String, String>{
@@ -780,6 +786,24 @@ class _ChartsState extends State<Charts> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditProfilePage(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          Icons.message,
+                          color: Colors.white,
+                        ),
+                        title: Text(
+                          'Contact Admin',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Message(),
                             ),
                           );
                         },

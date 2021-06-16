@@ -37,16 +37,16 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   String qrName = 'Unknown data ';
   void submit(context) async {
     print("Yes");
-
+    print(qrCode);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt('id') ?? 0;
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int userId = prefs.getInt('id') ?? 0;
       QrText qrr = QrText.fromJson(jsonDecode(qrCode));
       int code = qrr.qrCode;
       String name = qrr.name;
 
       Uri url = Uri.parse(
-          'http://192.168.43.60:3000/AssignProduct/$code/$name/$userId');
+          'http://192.168.1.13:3000/AssignProduct/$code/$name/$userId');
       http.Response response = await http.post(
         url,
       );

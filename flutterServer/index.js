@@ -359,7 +359,13 @@ console.log(userId);
  function add(accumulator, a) {
   return accumulator + a;
 }
-
+app.post('/messages',async(req,res)=>{
+  console.log(req.body);
+const message=await axios.post('http://localhost/api.php/records/messages',req.body)
+res.send({
+  "status":200
+})
+})
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
